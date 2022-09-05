@@ -2,7 +2,11 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+Important:
+
+To run the project, rename `.env.template` to `.env` and fill in your DB access string. Take notice that this project currently works with a PostgreSQL db.
+
+Then, run the development server:
 
 ```bash
 npm run dev

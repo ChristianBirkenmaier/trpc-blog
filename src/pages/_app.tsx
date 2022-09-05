@@ -5,18 +5,27 @@ import { loggerLink } from "@trpc/client/links/loggerLink";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import superjson from "superjson";
 import { AppRouter } from "../server/route/app.router";
+import { URL } from "../constants";
+import { trpc } from "../utils/trpc";
+import { UserContextProvider } from "../context/user.context";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  const { data, error, isLoading } = trpc.useQuery(["users.me"]);
+
+  if (isLoading) return <p>Loading user ...</p>;
+
+  return (
+    <UserContextProvider value={data}>
+      <main>
+        <Component {...pageProps} />
+      </main>
+    </UserContextProvider>
+  );
 }
 
 export default withTRPC<AppRouter>({
   config({ ctx }) {
-    const url = process.env.NEXT_PUBLIC_VERCEL_URL
-      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/trpc`
-      : "http://localhost:3000/api/trpc";
-
-    const links = [loggerLink(), httpBatchLink({ maxBatchSize: 10, url })];
+    const links = [loggerLink(), httpBatchLink({ maxBatchSize: 10, url: URL })];
 
     return {
       queryClientConfig: { defaultOptions: { queries: { staleTime: 60 } } },
